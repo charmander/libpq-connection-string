@@ -290,8 +290,37 @@ const store = (key, value, result) => {
 	result[key] = value;
 };
 
+const unescapeValue = escapedValue =>
+	escapedValue.replace(/\\(.?)/g, '$1');
+
 const parseKeyValue = connectionString => {
-	throw new Error('Not implemented');
+	const result = createConnInfo();
+
+	const pair = /[ \f\n\r\t\v]*(?:([^= \f\n\r\t\v]*)[ \f\n\r\t\v]*=[ \f\n\r\t\v]*([^' \f\n\r\t\v][^ \f\n\r\t\v]*|'(?:[^'\\]|\\[^])*('?)|)|([^ \f\n\r\t\v]+))/y;
+
+	for (let match; (match = pair.exec(connectionString)) !== null;) {
+		if (match[4] !== undefined) {
+			throw new Error(`Connection string missing “=” after “${match[4]}”`);
+		}
+
+		const key = match[1];
+
+		let escapedValue;
+
+		if (match[3] === undefined) {
+			escapedValue = match[2];
+		} else {
+			if (match[3] === '') {
+				throw new Error('Connection string missing closing quote');
+			}
+
+			escapedValue = match[2].slice(1, -1);
+		}
+
+		store(key, unescapeValue(escapedValue), result);
+	}
+
+	return result;
 };
 
 module.exports = parseConnectionString;
