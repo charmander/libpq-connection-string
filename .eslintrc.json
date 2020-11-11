@@ -1,0 +1,17 @@
+{
+	"extends": "@charmander/base",
+	"env": {
+		"node": true
+	},
+	"rules": {
+		"indent": ["error", "tab", {
+			"SwitchCase": 1,
+			"flatTernaryExpressions": true
+		}],
+		"operator-linebreak": ["error", "before", {
+			"overrides": {
+				"=": "after"
+			}
+		}]
+	}
+}
