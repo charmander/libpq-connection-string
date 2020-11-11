@@ -38,6 +38,10 @@ const addServiceDefaultsSync = result => {
 				if (reader.add(buf.slice(0, bytesRead))) {
 					return;
 				}
+
+				if (bytesRead === 0) {
+					break;
+				}
 			}
 		} finally {
 			fs.closeSync(fd);
