@@ -1,0 +1,36 @@
+{
+	"name": "libpq-connection-string",
+	"version": "0.1.0",
+	"description": "libpq-compatible connection string parsing",
+	"keywords": [
+		"postgresql"
+	],
+	"bugs": "https://github.com/charmander/libpq-connection-string/issues",
+	"license": "ISC",
+	"author": {
+		"name": "Charmander",
+		"email": "~@charmander.me",
+		"url": "https://charmander.me/"
+	},
+	"files": [
+		"index.js",
+		"add-env-defaults.js",
+		"add-service-defaults-sync.js",
+		"internal/has-unpaired-surrogates.js",
+		"internal/index-of-any.js",
+		"internal/options.js",
+		"internal/uri-decode-no-nul.js",
+		"internal/service-files/delimited-reader.js",
+		"internal/service-files/path-iterator.js",
+		"internal/service-files/reader.js"
+	],
+	"exports": {
+		".": "./index.js",
+		"./add-env-defaults": "./add-env-defaults.js",
+		"./add-service-defaults-sync": "./add-service-defaults-sync.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/charmander/libpq-connection-string"
+	}
+}

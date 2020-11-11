@@ -3,46 +3,7 @@
 const hasUnpairedSurrogates = require('./internal/has-unpaired-surrogates');
 const indexOfAny = require('./internal/index-of-any');
 const uriDecodeNoNul = require('./internal/uri-decode-no-nul');
-
-const DEFAULT_PORT = '5432';
-const DEFAULT_OPTION = '';
-const DEFAULT_SSL_MODE = 'prefer';
-const DEFAULT_GSS_MODE = 'prefer';
-const PG_KRB_SRVNAM = 'postgres';
-const DEFAULT_TARGET_SESSION_ATTRS = 'any';
-
-const DEFAULTS = {
-	service: null,
-	user: null,
-	password: null,
-	passfile: null,
-	connect_timeout: null,
-	dbname: null,
-	host: null,
-	hostaddr: null,
-	port: DEFAULT_PORT,
-	client_encoding: null,
-	options: DEFAULT_OPTION,
-	application_name: null,
-	fallback_application_name: null,
-	keepalives: null,
-	keepalives_idle: null,
-	keepalives_interval: null,
-	keepalives_count: null,
-	tcp_user_timeout: null,
-	sslmode: DEFAULT_SSL_MODE,
-	sslcompression: '0',
-	sslcert: null,
-	sslkey: null,
-	sslrootcert: null,
-	sslcrl: null,
-	requirepeer: null,
-	gssencmode: DEFAULT_GSS_MODE,
-	krbsrvname: PG_KRB_SRVNAM,
-	gsslib: null,
-	replication: null,
-	target_session_attrs: DEFAULT_TARGET_SESSION_ATTRS,
-};
+const OPTIONS = require('./internal/options');
 
 const IGNORED_FIELDS = new Set([
 	'authtype',
@@ -283,7 +244,7 @@ const store = (key, value, result) => {
 		return;
 	}
 
-	if (!result.hasOwnProperty(key)) {
+	if (!OPTIONS.has(key)) {
 		throw new Error('Connection string parameter unknown: ' + key);
 	}
 
