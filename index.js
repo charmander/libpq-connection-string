@@ -257,7 +257,7 @@ const unescapeValue = escapedValue =>
 const parseKeyValue = connectionString => {
 	const result = createConnInfo();
 
-	const pair = /[ \f\n\r\t\v]*(?:([^= \f\n\r\t\v]*)[ \f\n\r\t\v]*=[ \f\n\r\t\v]*([^' \f\n\r\t\v][^ \f\n\r\t\v]*|'(?:[^'\\]|\\[^])*('?)|)|([^ \f\n\r\t\v]+))/y;
+	const pair = /[ \f\n\r\t\v]*(?:([^= \f\n\r\t\v]*)[ \f\n\r\t\v]*=[ \f\n\r\t\v]*((?!')(?:[^ \f\n\r\t\v\\]|\\[^]?)+|'(?:[^'\\]|\\[^])*('?)|)|([^ \f\n\r\t\v]+))/y;
 
 	for (let match; (match = pair.exec(connectionString)) !== null;) {
 		if (match[4] !== undefined) {

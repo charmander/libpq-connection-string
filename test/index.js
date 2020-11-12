@@ -100,6 +100,7 @@ test.group('reference', test => {
 
 		'host = spaces.test',
 		'host=/run/trailing-backslash-test\\ port=5432',
+		'host=/run/trailing-backslash-test\\',
 		"host='/run/quoted-trailing-backslash-test\\",
 	].forEach(testReference);
 });
