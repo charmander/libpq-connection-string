@@ -187,7 +187,7 @@ const parseUri = (connectionString, uriPrefixLength) => {
 	let dbnameEnd;
 
 	if (netlocEnd < connectionString.length && connectionString.charAt(netlocEnd) === '/') {
-		let dbnameEnd = connectionString.indexOf('?', netlocEnd + 1);
+		dbnameEnd = connectionString.indexOf('?', netlocEnd + 1);
 
 		if (dbnameEnd === -1) {
 			dbnameEnd = connectionString.length;

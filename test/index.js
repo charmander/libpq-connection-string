@@ -94,6 +94,7 @@ test.group('reference', test => {
 	};
 
 	[
+		'postgresql://foo:bar@baz/quux?application_name=App',
 		'postgresql://127.0.0.1%2c127.0.0.2/',
 		'postgresql://127.0.0.2,/',
 		'postgresql://[,/:?]/',
