@@ -43,16 +43,21 @@ const getUriPrefixLength = connectionString => {
 
 const splitCredentials = uriCredentials => {
 	const i = uriCredentials.indexOf(':');
+	let encodedUser;
+	let encodedPassword;
 
-	return i === -1
-		? {
-			user: uriDecodeNoNul(uriCredentials),
-			password: null,
-		}
-		: {
-			user: uriDecodeNoNul(uriCredentials.substring(0, i)),
-			password: uriDecodeNoNul(uriCredentials.substring(i + 1)),
-		};
+	if (i === -1) {
+		encodedUser = uriCredentials;
+		encodedPassword = '';
+	} else {
+		encodedUser = uriCredentials.substring(0, i);
+		encodedPassword = uriCredentials.substring(i + 1);
+	}
+
+	return {
+		user: encodedUser === '' ? null : uriDecodeNoNul(encodedUser),
+		password: encodedPassword === '' ? null : uriDecodeNoNul(encodedPassword),
+	};
 };
 
 // src/interfaces/libpq/fe-connect.c:189: PQconninfoOptions
