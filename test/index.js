@@ -3,11 +3,22 @@
 const {promisify} = require('util');
 const assert = require('assert').strict;
 const execFileAsync = promisify(require('child_process').execFile);
+const fs = require('fs');
 const path = require('path');
 const test = require('@charmander/test')(module);
 const parseConnectionString = require('../');
 
 const referencePath = path.join(__dirname, 'reference');
+
+const getLines = text => {
+	const lines = text.split(/\r?\n/);
+
+	if (lines[lines.length - 1] === '') {
+		lines.pop();
+	}
+
+	return lines;
+};
 
 class NullTerminatedIterator {
 	constructor(string, position) {
@@ -74,25 +85,25 @@ const getReference = async connectionString => {
 	return {ok: result};
 };
 
+const testReference = test => value => {
+	test(JSON.stringify(value), async () => {
+		const reference = await getReference(value);
+
+		if (reference.err !== undefined) {
+			assert.throws(() => parseConnectionString(value), err => {
+				console.error(
+					`  ours:  ${err.message}\n`
+					+ `  libpq: ${reference.err}`
+				);
+				return true;
+			});
+		} else {
+			assert.deepEqual(parseConnectionString(value), reference.ok);
+		}
+	});
+};
+
 test.group('reference', test => {
-	const testReference = value => {
-		test(JSON.stringify(value), async () => {
-			const reference = await getReference(value);
-
-			if (reference.err !== undefined) {
-				assert.throws(() => parseConnectionString(value), err => {
-					console.error(
-						`  ours:  ${err.message}\n`
-						+ `  libpq: ${reference.err}`
-					);
-					return true;
-				});
-			} else {
-				assert.deepEqual(parseConnectionString(value), reference.ok);
-			}
-		});
-	};
-
 	[
 		'postgresql://foo:bar@baz/quux?application_name=App',
 		'postgresql://127.0.0.1%2c127.0.0.2/',
@@ -106,5 +117,11 @@ test.group('reference', test => {
 
 		'ssl=true',
 		'postgresql:///?ssl=true',
-	].forEach(testReference);
+	].forEach(testReference(test));
+});
+
+test.group('libpq', test => {
+	const lines = getLines(fs.readFileSync(path.join(__dirname, '../postgres/src/interfaces/libpq/test/regress.in'), 'utf8'));
+
+	lines.forEach(testReference(test));
 });
