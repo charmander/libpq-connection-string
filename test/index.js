@@ -85,9 +85,13 @@ const getReference = async connectionString => {
 	return {ok: result};
 };
 
-const testReference = test => value => {
+const testReference = (test, expect) => value => {
 	test(JSON.stringify(value), async () => {
 		const reference = await getReference(value);
+
+		if (expect !== undefined) {
+			assert.equal(reference.err === undefined ? 'success' : 'failure', expect);
+		}
 
 		if (reference.err !== undefined) {
 			assert.throws(() => parseConnectionString(value), err => {
@@ -116,12 +120,16 @@ test.group('reference', test => {
 		'host = spaces.test',
 		'host=/run/trailing-backslash-test\\ port=5432',
 		'host=/run/trailing-backslash-test\\',
-		"host='/run/quoted-trailing-backslash-test\\",
 		"user='' password=''",
 
-		'ssl=true',
 		'postgresql:///?ssl=true',
-	].forEach(testReference(test));
+	].forEach(testReference(test, 'success'));
+
+	[
+		"host='/run/quoted-trailing-backslash-test\\",
+
+		'ssl=true',
+	].forEach(testReference(test, 'failure'));
 });
 
 test.group('libpq', test => {
