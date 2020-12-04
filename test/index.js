@@ -106,6 +106,9 @@ const testReference = test => value => {
 test.group('reference', test => {
 	[
 		'postgresql://foo:bar@baz/quux?application_name=App',
+		'postgresql://foo:@baz/quux?application_name=App',
+		'postgresql://:@baz/quux?application_name=App',
+		'postgresql://:bar@baz/quux?application_name=App',
 		'postgresql://127.0.0.1%2c127.0.0.2/',
 		'postgresql://127.0.0.2,/',
 		'postgresql://[,/:?]/',
@@ -114,6 +117,7 @@ test.group('reference', test => {
 		'host=/run/trailing-backslash-test\\ port=5432',
 		'host=/run/trailing-backslash-test\\',
 		"host='/run/quoted-trailing-backslash-test\\",
+		"user='' password=''",
 
 		'ssl=true',
 		'postgresql:///?ssl=true',
