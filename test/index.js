@@ -123,6 +123,18 @@ test.group('reference', test => {
 		"user='' password=''",
 
 		'postgresql:///?ssl=true',
+		'postgresql:///?requiressl=',
+		'postgresql:///?requiressl=0',
+		'postgresql:///?requiressl=1',
+		'postgresql:///?requiressl=2',
+		'postgresql:///?requiressl=foo',
+		'postgresql:///?requiressl=1foo',
+		'requiressl=',
+		'requiressl=0',
+		'requiressl=1',
+		'requiressl=2',
+		'requiressl=foo',
+		'requiressl=1foo',
 	].forEach(testReference(test, 'success'));
 
 	[
