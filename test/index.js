@@ -135,6 +135,9 @@ test.group('reference', test => {
 		'requiressl=2',
 		'requiressl=foo',
 		'requiressl=1foo',
+
+		'postgresql://baz/?authtype=foo&tty=bar',
+		'authtype=foo tty=bar host=baz',
 	].forEach(testReference(test, 'success'));
 
 	[
