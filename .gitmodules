@@ -1,4 +1,4 @@
 [submodule "postgres"]
 	path = postgres
 	url = https://github.com/postgres/postgres
-	branch = REL_12_STABLE
+	branch = REL_13_STABLE

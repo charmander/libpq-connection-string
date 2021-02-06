@@ -1,7 +1,9 @@
 'use strict';
 
+// defaults for USE_SSL
 const DEFAULT_PORT = '5432';
 const DEFAULT_OPTION = '';
+const DEFAULT_CHANNEL_BINDING = 'prefer';
 const DEFAULT_SSL_MODE = 'prefer';
 const DEFAULT_GSS_MODE = 'prefer';
 const PG_KRB_SRVNAM = 'postgres';
@@ -18,6 +20,7 @@ const OPTIONS = new Map([
 	['user', option('PGUSER', null)],
 	['password', option('PGPASSWORD', null)],
 	['passfile', option('PGPASSFILE', null)],
+	['channel_binding', option('PGCHANNELBINDING', DEFAULT_CHANNEL_BINDING)],
 	['connect_timeout', option('PGCONNECT_TIMEOUT', null)],
 	['dbname', option('PGDATABASE', null)],
 	['host', option('PGHOST', null)],
@@ -36,9 +39,12 @@ const OPTIONS = new Map([
 	['sslcompression', option('PGSSLCOMPRESSION', '0')],
 	['sslcert', option('PGSSLCERT', null)],
 	['sslkey', option('PGSSLKEY', null)],
+	['sslpassword', option(null, null)],
 	['sslrootcert', option('PGSSLROOTCERT', null)],
 	['sslcrl', option('PGSSLCRL', null)],
 	['requirepeer', option('PGREQUIREPEER', null)],
+	['ssl_min_protocol_version', option('PGSSLMINPROTOCOLVERSION', 'TLSv1.2')],
+	['ssl_max_protocol_version', option('PGSSLMAXPROTOCOLVERSION', null)],
 	['gssencmode', option('PGGSSENCMODE', DEFAULT_GSS_MODE)],
 	['krbsrvname', option('PGKRBSRVNAME', PG_KRB_SRVNAM)],
 	['gsslib', option('PGGSSLIB', null)],
