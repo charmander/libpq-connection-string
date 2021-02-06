@@ -164,6 +164,17 @@ test.group('interface', test => {
 
 	test('invalid connection string encoding', () => {
 		assert.throws(() => parseConnectionString('user=postgres\0'), /^Error: Connection string can’t contain NUL characters$/);
-		assert.throws(() => parseConnectionString('user=\u{1f525}'.slice(0, -1)), /^Error: Connection string can’t contain unpaired surrogates$/);
+
+		for (const unpaired of [
+			'user=' + '\u{1f525}'.charAt(0),
+			'user=' + '\u{1f525}'.charAt(0) + 'x',
+			'user=' + '\u{1f525}'.charAt(0).repeat(2),
+			'user=' + '\u{1f525}'.charAt(1),
+			'user=' + '\u{1f525}'.charAt(1) + 'x',
+			'user=' + '\u{1f525}'.charAt(1).repeat(2),
+			'user=' + '\u{1f525}'.split('').reverse().join(''),
+		]) {
+			assert.throws(() => parseConnectionString(unpaired), /^Error: Connection string can’t contain unpaired surrogates$/);
+		}
 	});
 });
