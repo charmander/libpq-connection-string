@@ -109,6 +109,9 @@ const testReference = (test, expect) => value => {
 
 test.group('reference', test => {
 	[
+		'',
+		' ',
+
 		'postgresql://foo:bar@baz/quux?application_name=App',
 		'postgresql://foo:@baz/quux?application_name=App',
 		'postgresql://:@baz/quux?application_name=App',
@@ -121,6 +124,7 @@ test.group('reference', test => {
 		'host=/run/trailing-backslash-test\\ port=5432',
 		'host=/run/trailing-backslash-test\\',
 		"user='' password=''",
+		'user=\u{1f525}',
 
 		'postgresql:///?ssl=true',
 		'postgresql:///?requiressl=',
@@ -151,4 +155,15 @@ test.group('libpq', test => {
 	const lines = getLines(fs.readFileSync(path.join(__dirname, '../postgres/src/interfaces/libpq/test/regress.in'), 'utf8'));
 
 	lines.forEach(testReference(test));
+});
+
+test.group('interface', test => {
+	test('invalid connection string type', () => {
+		assert.throws(() => parseConnectionString(1), /^TypeError: Connection string must be a string$/);
+	});
+
+	test('invalid connection string encoding', () => {
+		assert.throws(() => parseConnectionString('user=postgres\0'), /^Error: Connection string can’t contain NUL characters$/);
+		assert.throws(() => parseConnectionString('user=\u{1f525}'.slice(0, -1)), /^Error: Connection string can’t contain unpaired surrogates$/);
+	});
 });
