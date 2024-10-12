@@ -1,5 +1,3 @@
-'use strict';
-
 // src/interfaces/libpq/fe-connect.c:6196: conninfo_uri_decode
 const uriDecodeNoNul = encoded => {
 	const decoded = decodeURIComponent(encoded);
@@ -11,4 +9,4 @@ const uriDecodeNoNul = encoded => {
 	return decoded;
 };
 
-module.exports = uriDecodeNoNul;
+export default uriDecodeNoNul;

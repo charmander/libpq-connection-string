@@ -1,5 +1,3 @@
-'use strict';
-
 const hasUnpairedSurrogates = text => {
 	let leading = false;
 
@@ -22,4 +20,4 @@ const hasUnpairedSurrogates = text => {
 	return leading;
 };
 
-module.exports = hasUnpairedSurrogates;
+export default hasUnpairedSurrogates;

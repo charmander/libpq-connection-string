@@ -1,6 +1,6 @@
-'use strict';
+import {Buffer} from 'node:buffer';
 
-class DelimitedReader {
+export default class DelimitedReader {
 	constructor(service) {
 		const serviceLength = Buffer.byteLength(service, 'utf8');
 		const pattern = Buffer.alloc(serviceLength + 3);
@@ -55,6 +55,4 @@ class DelimitedReader {
 
 		return null;
 	}
-}
-
-module.exports = DelimitedReader;
+};

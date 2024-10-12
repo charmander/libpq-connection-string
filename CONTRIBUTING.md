@@ -1,5 +1,5 @@
 ## Running tests
 
 ```shellsession
-$ node --experimental-test-coverage test
+$ node --experimental-test-coverage test/index.mjs
 ```

@@ -1,7 +1,7 @@
-'use strict';
+import os from 'node:os';
+import path from 'node:path';
+import process from 'node:process';
 
-const os = require('os');
-const path = require('path');
 const SYSCONFDIR = '/etc/postgresql';
 
 const tryGetHomedir = () => {
@@ -25,7 +25,7 @@ const tryGetUserServiceFilePath = () => {
 };
 
 // src/interfaces/libpq/fe-connect.c:4957: parse_service_info
-class ServiceFilePathIterator {
+export default class ServiceFilePathIterator {
 	constructor(result) {
 		this.service =
 			result.service !== null ? result.service
@@ -64,6 +64,4 @@ class ServiceFilePathIterator {
 				throw new Error('Definition of service not found: ' + this.service);
 		}
 	}
-}
-
-module.exports = ServiceFilePathIterator;
+};

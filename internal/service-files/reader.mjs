@@ -1,9 +1,8 @@
-'use strict';
+import {Buffer} from 'node:buffer';
+import DelimitedReader from './delimited-reader.mjs';
+import OPTIONS from '../options.mjs';
 
-const DelimitedReader = require('./delimited-reader');
-const OPTIONS = require('../options');
-
-class ServiceFileReader {
+export default class ServiceFileReader {
 	constructor(result, service) {
 		this._found = false;
 		this._delimitedReader = new DelimitedReader(service);
@@ -44,7 +43,7 @@ class ServiceFileReader {
 
 		return false;
 	}
-}
+};
 
 const STATE_IGNORED = 0;
 const STATE_START_OF_LINE = 1;
@@ -176,5 +175,3 @@ class ServiceGroupReader {
 		return false;
 	}
 }
-
-module.exports = ServiceFileReader;

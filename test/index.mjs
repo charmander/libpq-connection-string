@@ -1,19 +1,20 @@
-'use strict';
-
-const {promisify} = require('util');
-const assert = require('assert').strict;
-const execFileAsync = promisify(require('child_process').execFile);
-const path = require('path');
+import assert from 'node:assert/strict';
+import child_process from 'node:child_process';
 
 // `describe` is compatible back to Node 18
-const {describe: suite, test} = require('node:test');
+import {describe as suite, test} from 'node:test';
 
-const parseConnectionString = require('../');
+import {fileURLToPath} from 'node:url';
+import {promisify} from 'node:util';
+
+import parseConnectionString from 'libpq-connection-string';
+
+const execFileAsync = promisify(child_process.execFile);
 
 // A temporary convenience for testing against reference versions of libpq that are different from the one this implementation is based on, but close enough.
 const REFERENCE_TEST_NULLS = false;
 
-const referencePath = path.join(__dirname, 'reference');
+const referencePath = fileURLToPath(new URL('./reference', import.meta.url));
 
 class NullTerminatedIterator {
 	constructor(string, position) {

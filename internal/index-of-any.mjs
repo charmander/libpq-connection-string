@@ -1,5 +1,3 @@
-'use strict';
-
 const indexOfAny = (string, chars, start) => {
 	const charSet = new Set(chars);
 
@@ -12,4 +10,4 @@ const indexOfAny = (string, chars, start) => {
 	return -1;
 };
 
-module.exports = indexOfAny;
+export default indexOfAny;

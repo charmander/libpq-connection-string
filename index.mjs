@@ -1,9 +1,7 @@
-'use strict';
-
-const hasUnpairedSurrogates = require('./internal/has-unpaired-surrogates');
-const indexOfAny = require('./internal/index-of-any');
-const uriDecodeNoNul = require('./internal/uri-decode-no-nul');
-const OPTIONS = require('./internal/options');
+import hasUnpairedSurrogates from './internal/has-unpaired-surrogates.mjs';
+import indexOfAny from './internal/index-of-any.mjs';
+import uriDecodeNoNul from './internal/uri-decode-no-nul.mjs';
+import OPTIONS from './internal/options.mjs';
 
 // src/interfaces/libpq/fe-connect.c:5568: parse_connection_string
 const parseConnectionString = connectionString => {
@@ -286,4 +284,4 @@ const parseKeyValue = connectionString => {
 	return result;
 };
 
-module.exports = parseConnectionString;
+export default parseConnectionString;

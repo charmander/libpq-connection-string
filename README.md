@@ -3,7 +3,7 @@ A libpq-compatible[^1] connection string parser, like [`PQconninfoParse`][PQconn
 [^1]: when the connection string is normally encoded as UTF-8 and the C locale is used for `isspace`
 
 ```js
-const parseConnectionString = require('libpq-connection-string');
+import parseConnectionString from 'libpq-connection-string';
 
 parseConnectionString('postgresql://host1:123,host2:456/somedb?target_session_attrs=any&application_name=myapp')
 // { … dbname: 'somedb', host: 'host1,host2', port: '123,456' … }
@@ -36,9 +36,9 @@ libpq-connection-string/add-env-defaults is a function to add libpq defaults (ex
 Getting the defaults that `PQconnect` would use:
 
 ```js
-const parseConnectionString = require('libpq-connection-string');
-const addServiceDefaultsSync = require('libpq-connection-string/add-service-defaults-sync');
-const addEnvDefaults = require('libpq-connection-string/add-env-defaults');
+import parseConnectionString from 'libpq-connection-string';
+import addServiceDefaultsSync from 'libpq-connection-string/add-service-defaults-sync';
+import addEnvDefaults from 'libpq-connection-string/add-env-defaults';
 
 const options = parseConnectionString('host=/run/postgres');
 addServiceDefaultsSync(options);

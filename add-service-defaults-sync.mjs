@@ -1,8 +1,7 @@
-'use strict';
-
-const fs = require('fs');
-const ServiceFilePathIterator = require('./internal/service-files/path-iterator');
-const ServiceFileReader = require('./internal/service-files/reader');
+import {Buffer} from 'node:buffer';
+import fs from 'node:fs';
+import ServiceFilePathIterator from './internal/service-files/path-iterator.mjs';
+import ServiceFileReader from './internal/service-files/reader.mjs';
 
 const BUFFER_SIZE = 4096;
 
@@ -49,4 +48,4 @@ const addServiceDefaultsSync = result => {
 	}
 };
 
-module.exports = addServiceDefaultsSync;
+export default addServiceDefaultsSync;

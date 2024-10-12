@@ -1,7 +1,6 @@
-'use strict';
-
-const os = require('os');
-const OPTIONS = require('./internal/options');
+import os from 'node:os';
+import process from 'node:process';
+import OPTIONS from './internal/options.mjs';
 
 const tryGetUsername = () => {
 	try {
@@ -34,4 +33,4 @@ const addEnvDefaults = result => {
 	}
 };
 
-module.exports = addEnvDefaults;
+export default addEnvDefaults;

@@ -13,24 +13,27 @@
 		"url": "https://charmander.me/"
 	},
 	"files": [
-		"index.js",
-		"add-env-defaults.js",
-		"add-service-defaults-sync.js",
-		"internal/has-unpaired-surrogates.js",
-		"internal/index-of-any.js",
-		"internal/options.js",
-		"internal/uri-decode-no-nul.js",
-		"internal/service-files/delimited-reader.js",
-		"internal/service-files/path-iterator.js",
-		"internal/service-files/reader.js"
+		"index.mjs",
+		"add-env-defaults.mjs",
+		"add-service-defaults-sync.mjs",
+		"internal/has-unpaired-surrogates.mjs",
+		"internal/index-of-any.mjs",
+		"internal/options.mjs",
+		"internal/uri-decode-no-nul.mjs",
+		"internal/service-files/delimited-reader.mjs",
+		"internal/service-files/path-iterator.mjs",
+		"internal/service-files/reader.mjs"
 	],
 	"exports": {
-		".": "./index.js",
-		"./add-env-defaults": "./add-env-defaults.js",
-		"./add-service-defaults-sync": "./add-service-defaults-sync.js"
+		".": "./index.mjs",
+		"./add-env-defaults": "./add-env-defaults.mjs",
+		"./add-service-defaults-sync": "./add-service-defaults-sync.mjs"
 	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/charmander/libpq-connection-string"
+	},
+	"scripts": {
+		"test": "node test/index.mjs"
 	}
 }

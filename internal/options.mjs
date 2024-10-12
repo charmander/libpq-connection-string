@@ -1,5 +1,3 @@
-'use strict';
-
 // defaults for USE_SSL
 const DEFAULT_PORT = '5432';
 const DEFAULT_OPTION = '';
@@ -54,4 +52,4 @@ const OPTIONS = new Map([
 	['target_session_attrs', option('PGTARGETSESSIONATTRS', DEFAULT_TARGET_SESSION_ATTRS)],
 ]);
 
-module.exports = OPTIONS;
+export default OPTIONS;
