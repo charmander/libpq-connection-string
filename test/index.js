@@ -4,7 +4,10 @@ const {promisify} = require('util');
 const assert = require('assert').strict;
 const execFileAsync = promisify(require('child_process').execFile);
 const path = require('path');
-const test = require('@charmander/test')(module);
+
+// `describe` is compatible back to Node 18
+const {describe: suite, test} = require('node:test');
+
 const parseConnectionString = require('../');
 
 // A temporary convenience for testing against reference versions of libpq that are different from the one this implementation is based on, but close enough.
@@ -22,6 +25,7 @@ class NullTerminatedIterator {
 		const start = this.position;
 		const end = this.string.indexOf('\0', start);
 
+		/* node:coverage ignore next 3 */
 		if (end === -1) {
 			throw new Error('Missing null terminator');
 		}
@@ -45,6 +49,7 @@ const getReference = async connectionString => {
 		return {err: stdout.slice(6, -1).trimEnd()};
 	}
 
+	/* node:coverage ignore next 3 */
 	if (!stdout.startsWith('ok\0')) {
 		throw new Error('Unexpected reference output');
 	}
@@ -68,6 +73,7 @@ const getReference = async connectionString => {
 		result[key] = null;
 	}
 
+	/* node:coverage ignore next 3 */
 	if (iter.position !== stdout.length) {
 		throw new Error('Unexpected trailing output');
 	}
@@ -90,7 +96,7 @@ const testReference = (test, expect) => value => {
 
 		if (reference.err !== undefined) {
 			assert.throws(() => parseConnectionString(value), err => {
-				console.error(
+				console.log(
 					`  ours:  ${err.message}\n`
 					+ `  libpq: ${reference.err}`
 				);
@@ -102,7 +108,7 @@ const testReference = (test, expect) => value => {
 	});
 };
 
-test.group('reference', test => {
+suite('reference', () => {
 	[
 		'',
 		' ',
@@ -147,7 +153,7 @@ test.group('reference', test => {
 	].forEach(testReference(test, 'failure'));
 });
 
-test.group('libpq', test => {
+suite('libpq', () => {
 	// src/interfaces/libpq/t/001_uri.pl
 	const tests = [
 		{
@@ -396,7 +402,7 @@ test.group('libpq', test => {
 
 		for (const {url, error: expectedError} of errorTests) {
 			assert.throws(() => parseConnectionString(url), err => {
-				console.error(
+				console.log(
 					`  ours:  ${err.message}\n`
 					+ `  libpq: ${expectedError}`
 				);
@@ -406,7 +412,7 @@ test.group('libpq', test => {
 	});
 });
 
-test.group('interface', test => {
+suite('interface', () => {
 	test('invalid connection string type', () => {
 		assert.throws(() => parseConnectionString(1), /^TypeError: Connection string must be a string$/);
 	});
