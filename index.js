@@ -5,12 +5,7 @@ const indexOfAny = require('./internal/index-of-any');
 const uriDecodeNoNul = require('./internal/uri-decode-no-nul');
 const OPTIONS = require('./internal/options');
 
-const IGNORED_FIELDS = new Set([
-	'authtype',
-	'tty',
-]);
-
-// src/interfaces/libpq/fe-connect.c:5267: parse_connection_string
+// src/interfaces/libpq/fe-connect.c:5568: parse_connection_string
 const parseConnectionString = connectionString => {
 	if (typeof connectionString !== 'string') {
 		throw new TypeError('Connection string must be a string');
@@ -33,9 +28,9 @@ const parseConnectionString = connectionString => {
 		: parseUri(connectionString, uriPrefixLength);
 };
 
-// src/interfaces/libpq/fe-connect.c:5287: uri_prefix_length
+// src/interfaces/libpq/fe-connect.c:5588: uri_prefix_length
 const getUriPrefixLength = connectionString => {
-	// src/interfaces/libpq/fe-connect.c:361: uri_designator, short_uri_designator
+	// src/interfaces/libpq/fe-connect.c:371: uri_designator, short_uri_designator
 	const prefix = /^postgres(?:ql)?:\/\//.exec(connectionString);
 
 	return prefix === null ? 0 : prefix[0].length;
@@ -60,7 +55,7 @@ const splitCredentials = uriCredentials => {
 	};
 };
 
-// src/interfaces/libpq/fe-connect.c:189: PQconninfoOptions
+// src/interfaces/libpq/fe-connect.c:191: PQconninfoOptions
 const createConnInfo = () => ({
 	service: null,
 	user: null,
@@ -88,6 +83,8 @@ const createConnInfo = () => ({
 	sslpassword: null,
 	sslrootcert: null,
 	sslcrl: null,
+	sslcrldir: null,
+	sslsni: null,
 	requirepeer: null,
 	ssl_min_protocol_version: null,
 	ssl_max_protocol_version: null,
@@ -102,7 +99,7 @@ const parseUri = (connectionString, uriPrefixLength) => {
 	const result = createConnInfo();
 
 	// If credentials exist, parse them and start looking for netlocs after them
-	// src/interfaces/libpq/fe-connect.c:5867
+	// src/interfaces/libpq/fe-connect.c:6168
 	const credentialsEnd = indexOfAny(connectionString, '@/', uriPrefixLength);
 	let netlocStart;
 
@@ -217,7 +214,7 @@ const parseUri = (connectionString, uriPrefixLength) => {
 };
 
 // Parses a non-empty string of URI parameters.
-// src/interfaces/libpq/fe-connect.c:6065: conninfo_uri_parse_params
+// src/interfaces/libpq/fe-connect.c:6366: conninfo_uri_parse_params
 const parseUriParams = (paramsString, result) => {
 	const pairs = paramsString.split('&');
 
@@ -232,7 +229,7 @@ const parseUriParams = (paramsString, result) => {
 		let key = uriDecodeNoNul(encodedKey);
 		let value = uriDecodeNoNul(encodedValue);
 
-		// src/interfaces/libpq/fe-connect.c:6135: Special keyword handling for improved JDBC compatibility
+		// src/interfaces/libpq/fe-connect.c:6437: Special keyword handling for improved JDBC compatibility
 		if (key === 'ssl' && value === 'true') {
 			key = 'sslmode';
 			value = 'require';
@@ -242,15 +239,11 @@ const parseUriParams = (paramsString, result) => {
 	}
 };
 
-// src/interfaces/libpq/fe-connect.c:6311: conninfo_storeval
+// src/interfaces/libpq/fe-connect.c:6614: conninfo_storeval
 const store = (key, value, result) => {
 	if (key === 'requiressl') {
 		key = 'sslmode';
 		value = value.startsWith('1') ? 'require' : 'prefer';
-	}
-
-	if (IGNORED_FIELDS.has(key)) {
-		return;
 	}
 
 	if (!OPTIONS.has(key)) {

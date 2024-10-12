@@ -14,7 +14,7 @@ const option = (envName, fallbackDefault) => ({
 	fallbackDefault,
 });
 
-// src/interfaces/libpq/fe-connect.c:189: PQconninfoOptions
+// src/interfaces/libpq/fe-connect.c:191: PQconninfoOptions
 const OPTIONS = new Map([
 	['service', option('PGSERVICE', null)],
 	['user', option('PGUSER', null)],
@@ -42,6 +42,8 @@ const OPTIONS = new Map([
 	['sslpassword', option(null, null)],
 	['sslrootcert', option('PGSSLROOTCERT', null)],
 	['sslcrl', option('PGSSLCRL', null)],
+	['sslcrldir', option('PGSSLCRLDIR', null)],
+	['sslsni', option('PGSSLSNI', '1')],
 	['requirepeer', option('PGREQUIREPEER', null)],
 	['ssl_min_protocol_version', option('PGSSLMINPROTOCOLVERSION', 'TLSv1.2')],
 	['ssl_max_protocol_version', option('PGSSLMAXPROTOCOLVERSION', null)],

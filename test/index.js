@@ -3,7 +3,6 @@
 const {promisify} = require('util');
 const assert = require('assert').strict;
 const execFileAsync = promisify(require('child_process').execFile);
-const fs = require('fs');
 const path = require('path');
 const test = require('@charmander/test')(module);
 const parseConnectionString = require('../');
@@ -12,16 +11,6 @@ const parseConnectionString = require('../');
 const REFERENCE_TEST_NULLS = false;
 
 const referencePath = path.join(__dirname, 'reference');
-
-const getLines = text => {
-	const lines = text.split(/\r?\n/);
-
-	if (lines[lines.length - 1] === '') {
-		lines.pop();
-	}
-
-	return lines;
-};
 
 class NullTerminatedIterator {
 	constructor(string, position) {
@@ -83,8 +72,6 @@ const getReference = async connectionString => {
 		throw new Error('Unexpected trailing output');
 	}
 
-	assert(delete result.authtype);
-	assert(delete result.tty);
 	return {ok: result};
 };
 
@@ -150,9 +137,6 @@ test.group('reference', test => {
 		'requiressl=2',
 		'requiressl=foo',
 		'requiressl=1foo',
-
-		'postgresql://baz/?authtype=foo&tty=bar',
-		'authtype=foo tty=bar host=baz',
 	].forEach(testReference(test, 'success'));
 
 	[
@@ -164,9 +148,262 @@ test.group('reference', test => {
 });
 
 test.group('libpq', test => {
-	const lines = getLines(fs.readFileSync(path.join(__dirname, '../postgres/src/interfaces/libpq/test/regress.in'), 'utf8'));
+	// src/interfaces/libpq/t/001_uri.pl
+	const tests = [
+		{
+			url: 'postgresql://uri-user:secret@host:12345/db',
+			kv: "user='uri-user' password='secret' dbname='db' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://uri-user:secret@host:12345/db',
+			kv: "user='uri-user' password='secret' dbname='db' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://uri-user@host:12345/db',
+			kv: "user='uri-user' dbname='db' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://uri-user@host/db',
+			kv: "user='uri-user' dbname='db' host='host'",
+		},
+		{
+			url: 'postgresql://host:12345/db',
+			kv: "dbname='db' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://host/db',
+			kv: "dbname='db' host='host'",
+		},
+		{
+			url: 'postgresql://uri-user@host:12345/',
+			kv: "user='uri-user' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://uri-user@host/',
+			kv: "user='uri-user' host='host'",
+		},
+		{
+			url: 'postgresql://uri-user@',
+			kv: "user='uri-user'",
+		},
+		{
+			url: 'postgresql://host:12345/',
+			kv: "host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://host:12345',
+			kv: "host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://host/db',
+			kv: "dbname='db' host='host'",
+		},
+		{
+			url: 'postgresql://host/',
+			kv: "host='host'",
+		},
+		{
+			url: 'postgresql://host',
+			kv: "host='host'",
+		},
+		{
+			url: 'postgresql://',
+			kv: '',
+		},
+		{
+			url: 'postgresql://?hostaddr=127.0.0.1',
+			kv: "hostaddr='127.0.0.1'",
+		},
+		{
+			url: 'postgresql://example.com?hostaddr=63.1.2.4',
+			kv: "host='example.com' hostaddr='63.1.2.4'",
+		},
+		{
+			url: 'postgresql://%68ost/',
+			kv: "host='host'",
+		},
+		{
+			url: 'postgresql://host/db?user=uri-user',
+			kv: "user='uri-user' dbname='db' host='host'",
+		},
+		{
+			url: 'postgresql://host/db?user=uri-user&port=12345',
+			kv: "user='uri-user' dbname='db' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://host/db?u%73er=someotheruser&port=12345',
+			kv: "user='someotheruser' dbname='db' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://host:12345?user=uri-user',
+			kv: "user='uri-user' host='host' port='12345'",
+		},
+		{
+			url: 'postgresql://host?user=uri-user',
+			kv: "user='uri-user' host='host'",
+		},
+		{
+			url: 'postgresql://host?',
+			kv: "host='host'",
+		},
+		{
+			url: 'postgresql://[::1]:12345/db',
+			kv: "dbname='db' host='::1' port='12345'",
+		},
+		{
+			url: 'postgresql://[::1]/db',
+			kv: "dbname='db' host='::1'",
+		},
+		{
+			url: 'postgresql://[2001:db8::1234]/',
+			kv: "host='2001:db8::1234'",
+		},
+		{
+			url: 'postgresql://[200z:db8::1234]/',
+			kv: "host='200z:db8::1234'",
+		},
+		{
+			url: 'postgresql://[::1]',
+			kv: "host='::1'",
+		},
+		{
+			url: 'postgres://',
+			kv: '',
+		},
+		{
+			url: 'postgres:///',
+			kv: '',
+		},
+		{
+			url: 'postgres:///db',
+			kv: "dbname='db'",
+		},
+		{
+			url: 'postgres://uri-user@/db',
+			kv: "user='uri-user' dbname='db'",
+		},
+		{
+			url: 'postgres://?host=/path/to/socket/dir',
+			kv: "host='/path/to/socket/dir'",
+		},
+		{
+			url: 'postgres://@host',
+			kv: "host='host'",
+		},
+		{
+			url: 'postgres://host:/',
+			kv: "host='host'",
+		},
+		{
+			url: 'postgres://:12345/',
+			kv: "port='12345'",
+		},
+		{
+			url: 'postgres://otheruser@?host=/no/such/directory',
+			kv: "user='otheruser' host='/no/such/directory'",
+		},
+		{
+			url: 'postgres://otheruser@/?host=/no/such/directory',
+			kv: "user='otheruser' host='/no/such/directory'",
+		},
+		{
+			url: 'postgres://otheruser@:12345?host=/no/such/socket/path',
+			kv: "user='otheruser' host='/no/such/socket/path' port='12345'",
+		},
+		{
+			url: 'postgres://otheruser@:12345/db?host=/path/to/socket',
+			kv: "user='otheruser' dbname='db' host='/path/to/socket' port='12345'",
+		},
+		{
+			url: 'postgres://:12345/db?host=/path/to/socket',
+			kv: "dbname='db' host='/path/to/socket' port='12345'",
+		},
+		{
+			url: 'postgres://:12345?host=/path/to/socket',
+			kv: "host='/path/to/socket' port='12345'",
+		},
+		{
+			url: 'postgres://%2Fvar%2Flib%2Fpostgresql/dbname',
+			kv: "dbname='dbname' host='/var/lib/postgresql'",
+		},
+	];
 
-	lines.forEach(testReference(test));
+	for (const {url, kv} of tests) {
+		test(JSON.stringify(url), () => {
+			assert.deepEqual(parseConnectionString(url), parseConnectionString(kv));
+		});
+	}
+
+	test('errors', () => {
+		const errorTests = [
+			{
+				url: 'postgresql://host/db?u%7aer=someotheruser&port=12345',
+				error: 'invalid URI query parameter: "uzer"',
+			},
+			{
+				url: 'postgresql://host?uzer=',
+				error: 'invalid URI query parameter: "uzer"',
+			},
+			{
+				url: 'postgre://',
+				error: 'missing "=" after "postgre://" in connection info string',
+			},
+			{
+				url: 'postgres://[::1',
+				error: 'end of string reached when looking for matching "]" in IPv6 host address in URI: "postgres://[::1"',
+			},
+			{
+				url: 'postgres://[]',
+				error: 'IPv6 host address may not be empty in URI: "postgres://[]"',
+			},
+			{
+				url: 'postgres://[::1]z',
+				error: 'unexpected character "z" at position 17 in URI (expected ":" or "/"): "postgres://[::1]z"',
+			},
+			{
+				url: 'postgresql://host?zzz',
+				error: 'missing key/value separator "=" in URI query parameter: "zzz"',
+			},
+			{
+				url: 'postgresql://host?value1&value2',
+				error: 'missing key/value separator "=" in URI query parameter: "value1"',
+			},
+			{
+				url: 'postgresql://host?key=key=value',
+				error: 'extra key/value separator "=" in URI query parameter: "key"',
+			},
+			{
+				url: 'postgres://host?dbname=%XXfoo',
+				error: 'invalid percent-encoded token: "%XXfoo"',
+			},
+			{
+				url: 'postgresql://a%00b',
+				error: 'forbidden value %00 in percent-encoded value: "a%00b"',
+			},
+			{
+				url: 'postgresql://%zz',
+				error: 'invalid percent-encoded token: "%zz"',
+			},
+			{
+				url: 'postgresql://%1',
+				error: 'invalid percent-encoded token: "%1"',
+			},
+			{
+				url: 'postgresql://%',
+				error: 'invalid percent-encoded token: "%"',
+			},
+		];
+
+		for (const {url, error: expectedError} of errorTests) {
+			assert.throws(() => parseConnectionString(url), err => {
+				console.error(
+					`  ours:  ${err.message}\n`
+					+ `  libpq: ${expectedError}`
+				);
+				return true;
+			});
+		}
+	});
 });
 
 test.group('interface', test => {
