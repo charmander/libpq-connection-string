@@ -1,4 +1,6 @@
-A libpq-compatible\* connection string parser, like [`PQconninfoParse`][PQconninfoParse].
+A libpq-compatible[^1] connection string parser, like [`PQconninfoParse`][PQconninfoParse].
+
+[^1]: when the connection string is normally encoded as UTF-8 and the C locale is used for `isspace`
 
 ```js
 const parseConnectionString = require('libpq-connection-string');
@@ -42,12 +44,6 @@ const options = parseConnectionString('host=/run/postgres');
 addServiceDefaultsSync(options);
 addEnvDefaults(options);
 ```
-
-
----
-
-\* when the connection string is normally encoded as UTF-8 and the C locale is used for `isspace`
-
 
 [PQconninfoParse]: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-PQCONNINFOPARSE
 [pgservice]: https://www.postgresql.org/docs/current/libpq-pgservice.html
