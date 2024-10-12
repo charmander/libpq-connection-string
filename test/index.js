@@ -8,6 +8,9 @@ const path = require('path');
 const test = require('@charmander/test')(module);
 const parseConnectionString = require('../');
 
+// A temporary convenience for testing against reference versions of libpq that are different from the one this implementation is based on, but close enough.
+const REFERENCE_TEST_NULLS = false;
+
 const referencePath = path.join(__dirname, 'reference');
 
 const getLines = text => {
@@ -85,6 +88,11 @@ const getReference = async connectionString => {
 	return {ok: result};
 };
 
+const filterOptions =
+	REFERENCE_TEST_NULLS
+		? options => options
+		: options => Object.fromEntries(Object.entries(options).filter(([k, v]) => v !== null));
+
 const testReference = (test, expect) => value => {
 	test(JSON.stringify(value), async () => {
 		const reference = await getReference(value);
@@ -102,7 +110,7 @@ const testReference = (test, expect) => value => {
 				return true;
 			});
 		} else {
-			assert.deepEqual(parseConnectionString(value), reference.ok);
+			assert.deepEqual(filterOptions(parseConnectionString(value)), filterOptions(reference.ok));
 		}
 	});
 };
