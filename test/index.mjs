@@ -151,6 +151,7 @@ suite('reference', () => {
 
 		'postgresql:///?ssl=truE',
 		'ssl=true',
+		' =test',
 	].forEach(testReference(test, 'failure'));
 });
 
