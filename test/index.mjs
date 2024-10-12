@@ -85,7 +85,7 @@ const getReference = async connectionString => {
 const filterOptions =
 	REFERENCE_TEST_NULLS
 		? options => options
-		: options => Object.fromEntries(Object.entries(options).filter(([k, v]) => v !== null));
+		: options => Object.fromEntries(Object.entries(options).filter(([, v]) => v !== null));
 
 const testReference = (test, expect) => value => {
 	test(JSON.stringify(value), async () => {
