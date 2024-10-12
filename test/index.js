@@ -116,6 +116,8 @@ test.group('reference', test => {
 		'postgresql://foo:@baz/quux?application_name=App',
 		'postgresql://:@baz/quux?application_name=App',
 		'postgresql://:bar@baz/quux?application_name=App',
+		'postgresql://foo:%380/',
+		'postgresql://%66oo/',
 		'postgresql://127.0.0.1%2c127.0.0.2/',
 		'postgresql://127.0.0.2,/',
 		'postgresql://[,/:?]/',
@@ -127,6 +129,7 @@ test.group('reference', test => {
 		'user=\u{1f525}',
 
 		'postgresql:///?ssl=true',
+		'postgresql:///?ssl=tru%65',
 		'postgresql:///?requiressl=',
 		'postgresql:///?requiressl=0',
 		'postgresql:///?requiressl=1',
@@ -147,6 +150,7 @@ test.group('reference', test => {
 	[
 		"host='/run/quoted-trailing-backslash-test\\",
 
+		'postgresql:///?ssl=truE',
 		'ssl=true',
 	].forEach(testReference(test, 'failure'));
 });
