@@ -16,7 +16,6 @@
 		"index.mjs",
 		"add-env-defaults.mjs",
 		"add-service-defaults-sync.mjs",
-		"internal/has-unpaired-surrogates.mjs",
 		"internal/index-of-any.mjs",
 		"internal/options.mjs",
 		"internal/uri-decode-no-nul.mjs",
@@ -35,5 +34,8 @@
 	},
 	"scripts": {
 		"test": "node test/index.mjs"
+	},
+	"engines": {
+		"node": ">=20"
 	}
 }

@@ -1,4 +1,3 @@
-import hasUnpairedSurrogates from './internal/has-unpaired-surrogates.mjs';
 import indexOfAny from './internal/index-of-any.mjs';
 import uriDecodeNoNul from './internal/uri-decode-no-nul.mjs';
 import OPTIONS from './internal/options.mjs';
@@ -15,7 +14,7 @@ const parseConnectionString = connectionString => {
 	}
 
 	// libpq normally parses a bytestring, but we have a string of UTF-16 text and intend to parse it like libpq would its UTF-8 encoding, so make sure the UTF-16 is valid and can be represented in UTF-8
-	if (hasUnpairedSurrogates(connectionString)) {
+	if (!connectionString.isWellFormed()) {
 		throw new Error('Connection string can’t contain unpaired surrogates');
 	}
 
