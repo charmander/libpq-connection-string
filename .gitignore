@@ -1,3 +1,4 @@
+.zig-cache/
+
 /coverage/
 /node_modules/
-/test/reference

@@ -1,0 +1,42 @@
+.{
+	// success
+	"",
+	" ",
+
+	"postgresql://foo:bar@baz/quux?application_name=App",
+	"postgresql://foo:@baz/quux?application_name=App",
+	"postgresql://:@baz/quux?application_name=App",
+	"postgresql://:bar@baz/quux?application_name=App",
+	"postgresql://foo:%380/",
+	"postgresql://%66oo/",
+	"postgresql://127.0.0.1%2c127.0.0.2/",
+	"postgresql://127.0.0.2,/",
+	"postgresql://[,/:?]/",
+
+	"host = spaces.test",
+	"host=/run/trailing-backslash-test\\ port=5432",
+	"host=/run/trailing-backslash-test\\",
+	"user='' password=''",
+	"user=🔥",
+
+	"postgresql:///?ssl=true",
+	"postgresql:///?ssl=tru%65",
+	"postgresql:///?requiressl=",
+	"postgresql:///?requiressl=0",
+	"postgresql:///?requiressl=1",
+	"postgresql:///?requiressl=2",
+	"postgresql:///?requiressl=foo",
+	"postgresql:///?requiressl=1foo",
+	"requiressl=",
+	"requiressl=0",
+	"requiressl=1",
+	"requiressl=2",
+	"requiressl=foo",
+	"requiressl=1foo",
+
+	// failure
+	"host='/run/quoted-trailing-backslash-test\\",
+	"postgresql:///?ssl=truE",
+	"ssl=true",
+	" =test"
+}
